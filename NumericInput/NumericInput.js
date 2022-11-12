@@ -21,7 +21,6 @@ export default class NumericInput extends Component {
     componentWillReceiveProps(props) {
         const initSent = !(props.initValue !== 0 && !props.initValue)
         if (props.initValue !== this.state.value && initSent) {
-
             this.setState({
                 value: props.initValue,
                 lastValid: props.initValue,
@@ -34,18 +33,18 @@ export default class NumericInput extends Component {
     }
     inc = () => {
         let value = this.props.value && (typeof this.props.value === 'number') ? this.props.value : this.state.value
+        value = +value;
         if (this.props.maxValue === null || (value + this.props.step < this.props.maxValue)) {
-            value = (value + this.props.step).toFixed(12)
+            value = (Number(value) + Number(this.props.step)).toFixed(12)
             value = this.props.valueType === 'real' ? parseFloat(value) : parseInt(value)
-            this.setState({ value, stringValue: value.toString() })
         } else if (this.props.maxValue !== null) {
             this.props.onLimitReached(true, 'Reached Maximum Value!')
             value = this.props.maxValue
-            this.setState({ value, stringValue: value.toString() })
-
         }
-        if (value !== this.props.value)
+        //if (value !== this.props.value || value === 0)
             this.props.onChange && this.props.onChange(Number(value))
+        this.setState({ value, stringValue: value.toString() })
+
     }
     dec = () => {
         let value = this.props.value && (typeof this.props.value === 'number') ? this.props.value : this.state.value
@@ -56,7 +55,7 @@ export default class NumericInput extends Component {
             this.props.onLimitReached(false, 'Reached Minimum Value!')
             value = this.props.minValue
         }
-        if (value !== this.props.value)
+        if (value !== this.props.value || value === 0)
             this.props.onChange && this.props.onChange(Number(value))
         this.setState({ value, stringValue: value.toString() })
     }
@@ -159,7 +158,7 @@ export default class NumericInput extends Component {
         const totalWidth = this.props.totalWidth
         const totalHeight = this.props.totalHeight ? this.props.totalHeight : (totalWidth * 0.4)
         const inputWidth = this.props.type === 'up-down' ? (totalWidth * 0.6) : (totalWidth * 0.4)
-        const borderRadiusTotal = totalHeight * 0.18
+        const borderRadiusTotal = totalHeight * 0.25
         const fontSize = totalHeight * 0.38
         const textColor = this.props.textColor
         const maxReached = this.state.value === this.props.maxValue
